@@ -67,20 +67,62 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // ===== YOUR CHALLENGE: IMPLEMENT THESE FUNCTIONS =====
 
-// TODO: Add keyboard event listener
-// document.addEventListener("keydown", (event) => {
-//     // Your code here!
-// });
+// Main event listener for keyboard input
+document.addEventListener("keydown", (event) => {
+    if (gameOver) return; // Check if game is over first
+    const key = event.key.toUpperCase(); // Convert to uppercase
 
-// TODO: Implement addLetter function
-// function addLetter(letter) {
-//     // Your code here!
+    if (key === "BACKSPACE") {
+        deleteLetter();
+    } else if (key === "ENTER") {
+        submitGuess();
+    } else if (/^[A-Z]$/.test(key)) {
+        addLetter(key);
+    }
+});
+
+// Listen for clicks on a specific button (example, update as needed)
+// const button = document.getElementById("yourButtonId");
+// function handleButtonClick() {
+//     console.log("Button was clicked!");
 // }
+// if (button) button.addEventListener("click", handleButtonClick);
+    
+// TODO: Implement addLetter function
+function addLetter(letter) {
+    logDebug(`🎯 addLetter("${letter}") called`, 'info');
+    if (currentTile >= 5) {
+        logDebug('❌ Row is already full. Cannot add more letters.', 'error');
+        return;
+    }
+    const currentRowElement= rows[currentRow];
+    const tiles = currentRowElement.querySelectorAll('.tile');
+    const tile = tiles[currentTile];
+    tile.textContent = letter;
+    tile.classList.add('filled');
+    logDebug(`✅ Letter "${letter}" added at row ${currentRow}, tile ${currentTile}`, 'success');
+    currentTile++;
+    logDebug(`Current word progress: ${getCurrentWord()}`, 'info');
+}
 
 // TODO: Implement deleteLetter function  
-// function deleteLetter() {
-//     // Your code here!
-// }
+
+function deleteLetter() {
+    logDebug(`🗑️ deleteLetter() called`, 'info');
+    if (currentTile <= 0) {
+        logDebug('❌ No letters to delete.', 'error');
+        return;
+    }
+    currentTile--;
+    const currentRowElement = rows[currentRow];
+    const tiles = currentRowElement.querySelectorAll('.tile');
+    const tile = tiles[currentTile];
+    const deletedLetter = tile.textContent;
+    tile.textContent = '';
+    tile.classList.remove('filled');
+    logDebug(`🗑️ Deleted letter "${deletedLetter}" from row ${currentRow}, tile ${currentTile}`, 'success');
+    logDebug(`Current word status: ${getCurrentWord()}`, 'info');
+}
 
 // TODO: Implement submitGuess function
 // function submitGuess() {
