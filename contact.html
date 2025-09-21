@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forms and Input Type</title>
+</head>
+<body>
+
+
+<h1>Let's talk about forms!</h1>
+
+<h2>Starting simple:</h2>
+<form action="/submit" method="post">
+  <label for="email">Email:</label>
+  <input type="email" id="email">
+  <button type="submit">Sign Up</button>
+</form>
+
+<h2>Other Input Types</h2>
+<form>
+  <label>Text: <input type="text" placeholder="Enter text"></label><br><br>
+  <label>Email: <input type="email" placeholder="Enter email"></label><br><br>
+  <label>Password: <input type="password" placeholder="Enter password"></label><br><br>
+  <label>Number: <input type="number" min="0" max="10"></label><br><br>
+  <label>Date: <input type="date"></label>
+</form>
+
+<h2>Groups of Inputs:</h2>
+<p>Choose your favorite pet:</p>
+<label><input type="radio" name="pet" value="dog"> Dog</label>
+<label><input type="radio" name="pet" value="cat"> Cat</label>
+
+<p>Choose your hobbies:</p>
+<label><input type="checkbox" name="hobby" value="coding"> Coding</label>
+<label><input type="checkbox" name="hobby" value="music"> Music</label>
+
+<h2>Dropdowns and Textareas</h2>
+<select name="year">
+  <option value="freshman">Freshman</option>
+  <option value="sophomore">Sophomore</option>
+  <option value="junior">Junior</option>
+  <option value="senior">Senior</option>
+</select><br><br>
+
+<textarea name="bio" rows="4" cols="30">
+Tell us about yourself...
+</textarea>
+
+<button type="submit">Sign Up</button>
+<button type="reset">Clear</button>
+
+
+
+</body>
+</html>
