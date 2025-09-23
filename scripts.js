@@ -146,16 +146,12 @@ function submitGuess() {
     // Get the current row element and tiles
     const currentRowElement = rows[currentRow];
     const tiles = currentRowElement.querySelectorAll('.tile');
-    // Build the guess string
     let guess = '';
     tiles.forEach(tile => {
         guess += tile.textContent;
     });
     // Log the guess and target word
     logDebug(`🔎 Guess: ${guess}, Target: ${TARGET_WORD}`, 'info');
-    // Call checkGuess (commented out for now)
-    // checkGuess(guess, tiles); // We'll implement this next!
-    // Move to next row
     currentRow++;
     currentTile = 0;
     logDebug(`State after submitGuess: currentRow=${currentRow}, currentTile=${currentTile}`, 'info');
@@ -171,7 +167,6 @@ function submitGuess() {
         setTimeout(() => alert(`Game over! The word was ${TARGET_WORD}`), 500);
         logDebug('💀 Game lost!', 'error');
     }
-    // Log current game status
     else {
         logDebug('➡️ Moving to next row.', 'info');
     }
@@ -179,8 +174,6 @@ function submitGuess() {
 
 // TODO: Implement checkGuess function (the hardest part!)
 function checkGuess(guess, tiles) {
-    logDebug(`🔍 Starting analysis for "${guess}"`, 'info');
-    // Split TARGET_WORD and guess into arrays
     const target = TARGET_WORD.split('');
     const guessArray = guess.split('');
     const result = ['absent', 'absent', 'absent', 'absent', 'absent'];
@@ -189,18 +182,18 @@ function checkGuess(guess, tiles) {
     for (let i = 0; i < 5; i++) {
         if (guessArray[i] === target[i]) {
             result[i] = 'correct';
-            target[i] = null;      // Mark as used
-            guessArray[i] = null;  // Mark as used
+            target[i] = null;      
+            guessArray[i] = null;  
         }
     }
 
     // STEP 2: Find wrong position matches  
     for (let i = 0; i < 5; i++) {
-        if (guessArray[i] !== null) { // only check unused letters
+        if (guessArray[i] !== null) {
             const idx = target.indexOf(guessArray[i]);
             if (idx !== -1) {
                 result[i] = 'present';
-                target[idx] = null; // Mark as used
+                target[idx] = null; 
             }
         }
     }
