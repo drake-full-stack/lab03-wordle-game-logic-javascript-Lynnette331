@@ -1,4 +1,5 @@
 // ===== GAME STATE VARIABLES =====
+// Test: Confirm keydown events are being captured
 const TARGET_WORD = "WORDS";  // Our secret word for testing
 let currentRow = 0;           // Which row we're filling (0-5)
 let currentTile = 0;          // Which tile in the row (0-4)
@@ -67,29 +68,136 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // ===== YOUR CHALLENGE: IMPLEMENT THESE FUNCTIONS =====
 
-// TODO: Add keyboard event listener
-// document.addEventListener("keydown", (event) => {
-//     // Your code here!
-// });
+// Main event listener for keyboard input
+document.addEventListener("keydown", (event) => {
+    if (gameOver) return; // Check if game is over first
+    const key = event.key.toUpperCase(); // Convert to uppercase
 
-// TODO: Implement addLetter function
-// function addLetter(letter) {
-//     // Your code here!
+    if (key === "BACKSPACE") {
+        deleteLetter();
+    } else if (key === "ENTER") {
+        submitGuess();
+    } else if (/^[A-Z]$/.test(key)) {
+        addLetter(key);
+    }
+});
+
+// Listen for clicks on a specific button (example, update as needed)
+// const button = document.getElementById("yourButtonId");
+// function handleButtonClick() {
+//     console.log("Button was clicked!");
 // }
+// if (button) button.addEventListener("click", handleButtonClick);
+    
+// TODO: Implement addLetter function
+function addLetter(letter) {
+    logDebug(`🎯 addLetter("${letter}") called`, 'info');
+    if (gameOver) {
+        logDebug('❌ Game is over. Cannot add more letters.', 'error');
+        return;
+    }
+    if (currentRow >= 6) {
+        logDebug('❌ No more rows available.', 'error');
+        return;
+    }
+    if (currentTile >= 5) {
+        logDebug('❌ Row is already full. Cannot add more letters.', 'error');
+        return;
+    }
+    const currentRowElement = rows[currentRow];
+    const tiles = currentRowElement.querySelectorAll('.tile');
+    const tile = tiles[currentTile];
+    tile.textContent = letter;
+    tile.classList.add('filled');
+    logDebug(`✅ Letter "${letter}" added at row ${currentRow}, tile ${currentTile}`, 'success');
+    currentTile++;
+    logDebug(`Current word progress: ${getCurrentWord()}`, 'info');
+    logDebug(`State after addLetter: currentRow=${currentRow}, currentTile=${currentTile}`, 'info');
+}
 
 // TODO: Implement deleteLetter function  
-// function deleteLetter() {
-//     // Your code here!
-// }
+
+function deleteLetter() {
+    logDebug(`🗑️ deleteLetter() called`, 'info');
+    if (currentTile <= 0) {
+        logDebug('❌ No letters to delete.', 'error');
+        return;
+    }
+    currentTile--;
+    const currentRowElement = rows[currentRow];
+    const tiles = currentRowElement.querySelectorAll('.tile');
+    const tile = tiles[currentTile];
+    const deletedLetter = tile.textContent;
+    tile.textContent = '';
+    tile.classList.remove('filled');
+    logDebug(`🗑️ Deleted letter "${deletedLetter}" from row ${currentRow}, tile ${currentTile}`, 'success');
+    logDebug(`Current word status: ${getCurrentWord()}`, 'info');
+}
 
 // TODO: Implement submitGuess function
-// function submitGuess() {
-//     // Your code here!
-// }
+function submitGuess() {
+    logDebug(`📝 submitGuess() called`, 'info');
+    // Check if row has exactly 5 letters
+    if (currentTile !== 5) {
+        alert('Please enter exactly 5 letters before submitting!');
+        logDebug('❌ Not enough letters to submit guess.', 'error');
+        return;
+    }
+    // Get the current row element and tiles
+    const currentRowElement = rows[currentRow];
+    const tiles = currentRowElement.querySelectorAll('.tile');
+    let guess = '';
+    tiles.forEach(tile => {
+        guess += tile.textContent;
+    });
+    // Log the guess and target word
+    logDebug(`🔎 Guess: ${guess}, Target: ${TARGET_WORD}`, 'info');
+    currentRow++;
+    currentTile = 0;
+    logDebug(`State after submitGuess: currentRow=${currentRow}, currentTile=${currentTile}`, 'info');
+    // Check win condition
+    if (guess === TARGET_WORD) {
+        gameOver = true;
+        setTimeout(() => alert('Congratulations! You won!'), 500);
+        logDebug('🏆 Game won!', 'success');
+    }
+    // Check lose condition
+    else if (currentRow >= 6) {
+        gameOver = true;
+        setTimeout(() => alert(`Game over! The word was ${TARGET_WORD}`), 500);
+        logDebug('💀 Game lost!', 'error');
+    }
+    else {
+        logDebug('➡️ Moving to next row.', 'info');
+    }
+}
 
 // TODO: Implement checkGuess function (the hardest part!)
-// function checkGuess(guess, tiles) {
-//     // Your code here!
-//     // Remember: handle duplicate letters correctly
-//     // Return the result array
-// }
+function checkGuess(guess, tiles) {
+    const target = TARGET_WORD.split('');
+    const guessArray = guess.split('');
+    const result = ['absent', 'absent', 'absent', 'absent', 'absent'];
+
+    // STEP 1: Find exact matches
+    for (let i = 0; i < 5; i++) {
+        if (guessArray[i] === target[i]) {
+            result[i] = 'correct';
+            target[i] = null;      
+            guessArray[i] = null;  
+        }
+    }
+
+    // STEP 2: Find wrong position matches  
+    for (let i = 0; i < 5; i++) {
+        if (guessArray[i] !== null) {
+            const idx = target.indexOf(guessArray[i]);
+            if (idx !== -1) {
+                result[i] = 'present';
+                target[idx] = null; 
+            }
+        }
+    }
+
+    // TODO: Apply CSS classes to tiles -- we'll do this in the next step
+    return result;
+}
